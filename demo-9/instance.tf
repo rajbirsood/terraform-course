@@ -2,6 +2,13 @@ resource "aws_instance" "example" {
   ami           = "${lookup(var.AMIS, var.AWS_REGION)}"
   instance_type = "t2.micro"
 
+  tags {
+  "Name" = "${var.orgName}"
+  "Organisation" = "${var.orgName}"
+  "Description" = "Terraform Testing instance"
+  "Type" = "FinOS Bastion"
+  }
+
   # the VPC subnet
   subnet_id = "${aws_subnet.main-public-1.id}"
 
@@ -10,6 +17,8 @@ resource "aws_instance" "example" {
 
   # the public SSH key
   key_name = "${aws_key_pair.mykeypair.key_name}"
+
+  user_data = "${file("Chef_Script.sh")}"
 }
 
 resource "aws_ebs_volume" "ebs-volume-1" {
